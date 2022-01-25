@@ -6,7 +6,10 @@ const { User } = require('../../models');
 // get /api/users
 router.get('/', (req, res) => {
     // Access our user model and run .finAll() method)
-    User.findAll()
+    // adding attributes: { exclude: ['password']} in user.findAll will hide your password upon return of the get router. same goes for the User.findOne.
+    User.findAll({
+        attributes: { exclude: ['password']}
+    })
     .then(dbUserData => res.json(dbUserData))
     .catch(err => {
         console.log(err);
@@ -19,6 +22,7 @@ router.get('/', (req, res) => {
 router.get('/:id', (req, res) => {
     // findOne is similar to findAll but we only want one peice of data back. we use the where option to indicate where to look. this is similar to SELECT * FROM user WHERE id = 1
     User.findOne({
+        attributes: { exclude: ['password']},
         where: {
             id: req.params.id
         }
