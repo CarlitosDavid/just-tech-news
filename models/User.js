@@ -1,8 +1,15 @@
 const { Model, DataTypes } =  require('sequelize');
 const sequelize = require('../config/connection');
+// adding bcrypt file to this file to perform the hashing function
+const bcrypt = require('bcrypt');
 
 // create our User model
-class User extends Model {}
+class User extends Model {
+    // set up method to run on instance data (per user) to check password
+    checkPassword(loginPw) {
+        return bcrypt.compareSync(loginPw, this.password);
+    }
+}
 
 // define table colums and configuration
 User.init(
@@ -16,7 +23,7 @@ User.init(
             // instuct that this is the primary key
             primaryKey: true, 
             // turn on auto increment
-            autoIncrement: this
+            autoIncrement: true
         },
         // define a username column 
         username: {
@@ -45,6 +52,25 @@ User.init(
         }
     },
     {
+        hooks: {
+            // set up beforeCreate lifecycle "hook" functionality
+            // uset eh beforeCreate() hook to execute bcrypt hash function on the plaintext password.
+            // pass the userData object that contains the plaintext passwortd in the password property.
+            // beforeCreate(userData) {
+            //     return bcrypt.hash(userData.password, 10).then(newUserData => {
+            //         return newUserData
+            //     });
+            // }
+            // replace it with async keyword contains a asynchronous funciton. 
+            async beforeCreate(userData) {
+                newUserData.password = await bcrypt.hash(newUserData.password, 10);
+                return newUserData;
+            },
+            async beforeUpdate(updatedUserData) {
+                updatedUserData.password = await bcrypt.hash(updatedUserData.password, 10);
+                return updatedUserData;
+            }
+        },
         sequelize, 
         timestamps: false, 
         freezeTableName: true, 
@@ -71,3 +97,11 @@ User.init(
 );
 
 module.exports = User;
+
+
+// Why is async mode recommended over sync mode?
+
+// If you are using bcrypt on a simple script, using the sync mode is perfectly fine. However, 
+// if you are using bcrypt on a server, the async mode is recommended. This is because the hashing done by bcrypt is CPU intensive,
+//  so the sync version will block the event loop and prevent your application from servicing any other inbound requests or events. 
+// The async version uses a thread pool which does not block the main event loop.
