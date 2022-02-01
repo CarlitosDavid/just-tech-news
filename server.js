@@ -11,10 +11,11 @@ app.use(express.urlencoded({ extended: true }));
 // turn on routes
 app.use(routes);
 
-// turn on connection to db and server 
+// turn on connection to db and server
 sequelize.sync({ force: false }).then(() => {
-    app.listen(PORT, () => console.log('Now listening'));
+  app.listen(PORT, () => console.log('Now listening'));
 });
+
 
 //  The router instance in routes/index.js collected everything for us and packaged them up for server.js to use.
 // note we're importing the connection to Sequelize from config/connection.js. Then, at the bottom of the file, we use the sequelize.sync() method to establish the connection to the database.
