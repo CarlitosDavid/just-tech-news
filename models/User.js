@@ -62,6 +62,7 @@ User.init(
 
 module.exports = User;
 
+
     // {
     
         //     // TABLE COLUMN DEFINTIONS GO HERE

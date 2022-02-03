@@ -1,44 +1,46 @@
-const { Model, DataTypes } = require('sequelize');
-const sequelize = require('../../config/connection');
+const router = require('express').Router();
+const { Comment } = require('../../models');
 
-class Comment extends Model {}
+router.get('/', (req, res) => {
+  Comment.findAll()
+    .then(dbCommentData => res.json(dbCommentData))
+    .catch(err => {
+      console.log(err);
+      res.status(500).json(err);
+    });
+});
 
-Comment.init(
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      primaryKey: true,
-      autoIncrement: true
-    },
-    comment_text: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        len: [1]
-      }
-    },
-    user_id: {
-      type: DataTypes.INTEGER,
-      references: {
-        model: 'user',
-        key: 'id'
-      }
-    },
-    post_id: {
-      type: DataTypes.INTEGER,
-      references: {
-        model: 'post',
-        key: 'id'
-      }
+router.post('/', (req, res) => {
+  // expects => {comment_text: "This is the comment", user_id: 1, post_id: 2}
+  Comment.create({
+    comment_text: req.body.comment_text,
+    user_id: req.session.user_id,
+    post_id: req.body.post_id
+  })
+    .then(dbCommentData => res.json(dbCommentData))
+    .catch(err => {
+      console.log(err);
+      res.status(400).json(err);
+    });
+});
+
+router.delete('/:id', (req, res) => {
+  Comment.destroy({
+    where: {
+      id: req.params.id
     }
-  },
-  {
-    sequelize,
-    freezeTableName: true,
-    underscored: true,
-    modelName: 'comment'
-  }
-);
+  })
+    .then(dbCommentData => {
+      if (!dbCommentData) {
+        res.status(404).json({ message: 'No comment found with this id!' });
+        return;
+      }
+      res.json(dbCommentData);
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json(err);
+    });
+});
 
-module.exports = Comment;
+module.exports = router;
