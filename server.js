@@ -2,14 +2,16 @@ const path = require('path');
 const express = require('express');
 const session = require('express-session');
 const exphbs = require('express-handlebars');
+const helpers = require('./utils/helpers');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+const hbs = exphbs.create({ helpers });
 
 const sequelize = require('./config/connection');
 // This code sets up an Express.js session and 
 // connects the session to our Sequelize database
-const SequelizeStore = require('connect-session-sequelize')(session.Store); 
+const SequelizeStore = require('connect-session-sequelize')(session.Store);
 // All we need to do to 
 // tell our session to use cookies is to set cookie to be {}.
 const sess = {

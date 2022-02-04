@@ -9,7 +9,7 @@ The reason for this is that Handlebars.js is meant to
   <li>
     <article class="post">
       <div class="title">
-        <a href="{{post_url}}" target="_blank">{{post.title}}</a>
+        <a href="{{post.post_url}}" target="_blank">{{post.title}}</a>
         <span>({{post.post_url}})</span>
       </div>
       <div class="meta">
@@ -22,6 +22,16 @@ The reason for this is that Handlebars.js is meant to
   </li>
   {{/each}}
 </ol>
+<ol class="post-list">
+  {{#each posts as |post|}}
+  <li>
+    {{> post-info post }}
+  </li>
+</ol>
+
+{{!-- to use a partial, all we need is the > character, 
+followed by the name of the partial file
+ and the object we'll pass to the partial. --}}
 
 {{!-- Within the {{#each}} block, Handlebars.js is smart enough to
  know that it's working with an object on each iteration, 

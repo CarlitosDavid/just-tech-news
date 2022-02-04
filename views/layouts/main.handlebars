@@ -15,7 +15,11 @@
         <a href="/">Just Tech News</a>
       </h1>
       <nav>
+        {{#if loggedIn}}
+        <button id="logout" class="btn-no-style">logout</button>
+        {{else}}
         <a href="/login">login</a>
+        {{/if}}
       </nav>
     </header>
     <main>
@@ -25,12 +29,17 @@
       Thanks for visiting!
     </footer>
   </div>
-  <nav>
-    <button id="logout" class="btn-no-style">logout</button>
-    <a href="/login">login</a>
-  </nav>
-
+  
+  {{#if loggedIn}}
   <script src="/javascript/logout.js"></script>
+  {{/if}}
 </body>
 
 </html>
+
+ {{!-- {{#if}} helper gives us, we could further improve the
+  user experience by not showing the login link to 
+  users who are already logged in—and not showing the 
+ logout button to users who are already logged out. 
+ How would you fix this error? 
+ Wrap the <script> element in an {{#if}} helper. --}}
